@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  P_VER: 3.12
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy code
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: ${{ env.P_VER }}
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-uv-{{ hash.Files('uv.lock') }}
+          path: ~/.cache/uv
+      - name: Install dependencies
+        run: uv sync
+      - name: Run pytest
+        run: uv run pytest .

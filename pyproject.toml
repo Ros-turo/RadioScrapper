@@ -7,10 +7,7 @@ authors = [
     { name = "Ros", email = "rostislavbondar3@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = [
-    "pydantic>=2.14.1",
-    "pydantic-settings>=2.15.0",
-]
+dependencies = []
 
 [project.scripts]
 radioscraper = "radioscraper:main"
