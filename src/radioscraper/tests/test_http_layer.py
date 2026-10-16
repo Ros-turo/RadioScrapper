@@ -11,4 +11,5 @@ def test_get_data_return_csv_file():
     api = StationAPI()
     api.get_data()
     assert os.path.exists("stations.csv")
+    os.remove("stations.csv")
 
