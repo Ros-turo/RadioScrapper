@@ -17,6 +17,6 @@ class EibiAPI(StationAPI):
         
         
     def get_data(self) -> bytes:
-        response = requests.get(self.station_url)
+        response = requests.get(self.url)
         response.raise_for_status()
         return response.content
