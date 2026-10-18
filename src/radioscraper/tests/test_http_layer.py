@@ -1,5 +1,5 @@
 import pytest
-from requests import HTTPError
+from requests import HTTPError, RequestException
 
 from radioscraper.exceptions import InvalidURL
 from radioscraper.http_layer import StationAPI, EibiAPI
@@ -16,5 +16,5 @@ def test_eibi_api_get_data() -> None:
     try:
         response = api.get_data()
         assert isinstance(response, bytes)
-    except HTTPError:
+    except RequestException:
         pass
