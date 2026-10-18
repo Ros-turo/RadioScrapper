@@ -16,12 +16,21 @@ def string_mock_data() -> str:
 
 
 @pytest.fixture
-def csv_data(string_mock_data: str) -> bytes:
+def csv_dumb_data(string_mock_data: str) -> bytes:
     return string_mock_data.encode()
 
 @pytest.fixture
-def csv_file(csv_data: bytes) -> Generator[str, None, None]:
+def csv_dumb_file(csv_dumb_data: bytes) -> Generator[str, None, None]:
     test_writer = CSVWriter("test.csv")
-    test_writer.write_bytes(csv_data)
+    test_writer.write_bytes(csv_dumb_data)
     yield "test.csv"
     os.remove("test.csv")
+
+
+@pytest.fixture
+def csv_station_mock_data() -> list[list[str]]:
+    return [
+        ["612", "0700-0900", "", "KRE","Voice of Korea"],
+        ["750", "1000-1400", "", "RUS","Voice of Russia"],
+        ["1500", "1500-1800", "", "USA","Navy"]
+    ]
