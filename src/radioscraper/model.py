@@ -1,8 +1,15 @@
 from dataclasses import dataclass
+from datetime import datetime
+
 
 @dataclass
 class StationData:
-    pass
+    frequency: float | int | None = None
+    start: datetime | None = None
+    end: datetime | None = None
+    regularity: int | None = None
+    station: str | None = None
+    language: str | None = None
 
 
 class Broadcast:

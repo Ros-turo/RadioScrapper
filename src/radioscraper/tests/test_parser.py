@@ -4,12 +4,14 @@ from typing import Generator
 import pytest
 import os
 from radioscraper.http_layer import StationAPI
+from radioscraper.parser import EibiParser
 
 
 class MockAPI(StationAPI):
 
     def get_data(self) -> str:
-        return "Name;Age;Nationality\r\nRos;21;UA"
+        return ("kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35;Start:60;Stop:60;\r\n"
+                "16.3;0000-2400;;IND;VTX1 Indian Navy;;SAs;v;1;;")
 
     def write_data_to_csv(self, fn: str, data: bytes | str) -> None:
         if isinstance(data, str):
@@ -29,4 +31,5 @@ def test_mock_data() -> Generator[None, None, None]:
     os.remove("test.csv")
 
 def test_eibi_parser_init(test_mock_data: None) -> None:
-    pass
+    parser = EibiParser(fn="test.csv")
+    parser.parse_file()
