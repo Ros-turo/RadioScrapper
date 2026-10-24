@@ -10,7 +10,7 @@ def main() -> None:
 
     if not os.path.exists(settings.CSV_FILE):
         bytes_data = eibiAPI.get_data()
-        eibiAPI.write_eibi_data_to_csv(settings.CSV_FILE, bytes_data)
+        eibiAPI.write_data_to_csv(settings.CSV_FILE, bytes_data)
 
     #Parser
 
