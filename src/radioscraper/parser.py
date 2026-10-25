@@ -57,7 +57,7 @@ class EibiParser(Parser):
     def parse_row(self, row: list) -> StationData:
         frequency = self.get_frequency(row[0])
         start_time, end_time = self.get_time(row[1])
-        days = self.get_regularity(row[2])
+        regularity = self.get_regularity(row[2])
         language = self.get_language(row[3], row[5])
         station = self.get_station(row[4])
         return StationData(
@@ -65,6 +65,7 @@ class EibiParser(Parser):
             station=station,
             start_time=start_time,
             end_time=end_time,
+            regularity=regularity
         )
 
     def get_time(self, time_row: str) -> tuple[time, time]:
