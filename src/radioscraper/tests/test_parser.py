@@ -1,4 +1,5 @@
 import csv
+from datetime import time
 from typing import Generator
 
 import pytest
@@ -33,3 +34,17 @@ def test_mock_data() -> Generator[None, None, None]:
 def test_eibi_parser_init(test_mock_data: None) -> None:
     parser = EibiParser(fn="test.csv")
     parser.parse_file()
+
+@pytest.mark.parametrize(
+    argnames=["mock_time", "excepted_tuple"],
+    argvalues=[
+        ("1200-1300", (time(12,00), time(13, 00))),
+        ("0730-1000", (time(7, 30), time(10, 00))),
+        ("0000-2400", (time(0,0), time(23,59)))
+    ])
+def test_eibi_parser_get_time(test_mock_data: None, mock_time:str, excepted_tuple: tuple[time]) -> None:
+    parser = EibiParser(fn="test.csv")
+    returned_tuple = parser.get_time(mock_time)
+
+    assert returned_tuple == excepted_tuple
+
