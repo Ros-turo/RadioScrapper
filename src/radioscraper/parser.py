@@ -1,8 +1,11 @@
 import csv
+from curses.ascii import isalpha
 from datetime import datetime, time
 import os
 from abc import ABC, abstractmethod
+from typing import List
 
+from radioscraper.exceptions import NotWeekdayPeriodError
 from radioscraper.model import Broadcast, StationData
 
 
@@ -24,18 +27,18 @@ class Parser(ABC):
 
     @abstractmethod
     def get_time(self, time_row: str) -> tuple[time, time]: ...
-    #
-    # @abstractmethod
-    # def get_station(self, station_row: str) -> str: ...
-    #
-    # @abstractmethod
-    # def get_language(self, language_row: str) -> str: ...
-    #
-    # @abstractmethod
-    # def get_frequency(self, frequency_row: str) -> float | int: ...
-    #
-    # @abstractmethod
-    # def get_regularity(self, days_row: str) -> str: ...
+
+    @abstractmethod
+    def get_station(self, station_row: str) -> str: ...
+
+    @abstractmethod
+    def get_language(self, itu: str, lng:str) -> str: ...
+
+    @abstractmethod
+    def get_frequency(self, frequency_row: str) -> float | int: ...
+
+    @abstractmethod
+    def get_regularity(self, days_row: str) -> List[int] | str: ...
 
 
 class EibiParser(Parser):
@@ -52,9 +55,17 @@ class EibiParser(Parser):
         return broadcast
 
     def parse_row(self, row: list) -> StationData:
-        frequency = row[0]
+        frequency = self.get_frequency(row[0])
         start_time, end_time = self.get_time(row[1])
-        return StationData()
+        days = self.get_regularity(row[2])
+        language = self.get_language(row[3], row[5])
+        station = self.get_station(row[4])
+        return StationData(
+            frequency=frequency,
+            station=station,
+            start_time=start_time,
+            end_time=end_time,
+        )
 
     def get_time(self, time_row: str) -> tuple[time, time]:
         start_time, end_time = time_row.split('-')
@@ -66,3 +77,70 @@ class EibiParser(Parser):
         end_time = time(int(end_time[:2]), int(end_time[2:]))
 
         return start_time, end_time
+
+    def get_station(self, station_row: str) -> str:
+        return station_row
+
+    def get_frequency(self, frequency_row: str) -> float | int:
+        return float(frequency_row)
+
+    def get_language(self, itu: str, lng:str) -> str:
+        #pres slovnik zkratek nachazet jazyk
+        if lng:
+            return lng
+        else:
+            return itu
+
+    def get_regularity(self, days_row: str) -> List[int] | str:
+        #dayday - 4pismena 2dny
+        #Last7 - posledni nedele, today + weekday of 1fs in month(except Sunday, -1) = 28
+        EVERY_DAY = [0,1,2,3,4,5,6]
+
+        if not days_row:
+            return EVERY_DAY
+
+        if days_row == "Last7":
+            return "Last7"
+
+        if len(days_row) == 2:
+            try:
+                weekday = self.get_weekday_from_string_abb(days_row)
+                return [weekday]
+            except NotWeekdayPeriodError:
+                return "irregular"
+
+        if len(days_row) == 4:
+            days = [days_row[:2], days_row[2:]]
+            try:
+                weekdays = [self.get_weekday_from_string_abb(day) for day in days]
+                return sorted(weekdays)
+            except NotWeekdayPeriodError:
+                return "irregular"
+
+        if len(days_row) == 5:
+            period = days_row.split("-")
+            if len(period) == 2:
+                try:
+                    weekdays = [self.get_weekday_from_string_abb(day) for day in period]
+                    return [day for day in range(weekdays[0], weekdays[1] + 1)]
+                except NotWeekdayPeriodError:
+                    return "irregular"
+
+
+        return "irregular"
+
+    @staticmethod
+    def get_weekday_from_string_abb(days_row: str) -> int:
+        weekday_dict = {
+            "Mo": 1,
+            "Tu": 2,
+            "We": 3,
+            "Th": 4,
+            "Fr": 5,
+            "Sa": 6,
+            "Su": 0
+        }
+        weekday = weekday_dict.get(days_row, None)
+        if weekday is None:
+            raise NotWeekdayPeriodError()
+        return weekday

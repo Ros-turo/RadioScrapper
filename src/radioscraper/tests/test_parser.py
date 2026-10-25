@@ -1,6 +1,6 @@
 import csv
 from datetime import time
-from typing import Generator
+from typing import Generator, List
 
 import pytest
 import os
@@ -33,7 +33,8 @@ def test_mock_data() -> Generator[None, None, None]:
 
 def test_eibi_parser_init(test_mock_data: None) -> None:
     parser = EibiParser(fn="test.csv")
-    parser.parse_file()
+    broadcast = parser.parse_file()
+    print(broadcast)
 
 @pytest.mark.parametrize(
     argnames=["mock_time", "excepted_tuple"],
@@ -47,4 +48,27 @@ def test_eibi_parser_get_time(test_mock_data: None, mock_time:str, excepted_tupl
     returned_tuple = parser.get_time(mock_time)
 
     assert returned_tuple == excepted_tuple
+
+
+@pytest.mark.parametrize(
+    argnames=["mock_days", "expected_value"],
+    argvalues=[(None, [0,1,2,3,4,5,6]),
+               ("Mo-Fr", [1,2,3,4,5]),
+               ('Th', [4]),
+               ("Wa", "irregular"),
+               ("SaSu", [0,6]),
+               ("irr", "irregular"),
+               ("harm", "irregular"),
+               ("Last7", "Last7"),
+               ("MF-15", "irregular")]
+)
+def test_eibi_parser_get_regularity(
+        test_mock_data: None,
+        mock_days:str,
+        expected_value: List[int] | str
+) -> None:
+    parser = EibiParser(fn="test.csv")
+    regularity = parser.get_regularity(mock_days)
+
+    assert regularity == expected_value
 
