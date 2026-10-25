@@ -1,14 +1,16 @@
 from dataclasses import dataclass
 from datetime import time
+from typing import List
+
 
 @dataclass
 class StationData:
-    frequency: float | int | None = None
-    start_time: time | None = None
-    end_time: time | None = None
-    regularity: list[int] | str | None = None
-    station: str | None = None
-    language: str | None = None
+    frequency: float | int
+    start_time: time
+    end_time: time
+    regularity: List[int] | str
+    station: str
+    language: List[str] | None = None
 
 
 class Broadcast:

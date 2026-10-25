@@ -14,7 +14,7 @@ def test_init_eibi_api_instance() -> None:
 def test_eibi_api_get_data() -> None:
     api = EibiAPI()
     try:
-        response = api.get_data()
+        response = api.get_station_data()
         assert isinstance(response, bytes)
     except HTTPError:
         pass

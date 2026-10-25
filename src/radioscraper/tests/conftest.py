@@ -14,7 +14,7 @@ def eibi_test_csv_station() -> str:
     if os.path.exists("test_station.csv"):
         pass
     else:
-        eibi_data_bytes = eibi_api.get_data()
+        eibi_data_bytes = eibi_api.get_station_data()
         eibi_api.write_eibi_data_to_csv("test_station.csv", eibi_data_bytes)
     return "test_station.csv"
 

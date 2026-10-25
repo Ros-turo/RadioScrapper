@@ -1,4 +1,5 @@
 import csv
+import json
 from curses.ascii import isalpha
 from datetime import datetime, time
 import os
@@ -58,7 +59,7 @@ class EibiParser(Parser):
         frequency = self.get_frequency(row[0])
         start_time, end_time = self.get_time(row[1])
         regularity = self.get_regularity(row[2])
-        language = self.get_language(row[3], row[5])
+        language = self.get_language(row[5])
         station = self.get_station(row[4])
         return StationData(
             frequency=frequency,
@@ -85,12 +86,12 @@ class EibiParser(Parser):
     def get_frequency(self, frequency_row: str) -> float | int:
         return float(frequency_row)
 
-    def get_language(self, itu: str, lng:str) -> str:
+    def get_language(self, lng: str) -> str:
         #pres slovnik zkratek nachazet jazyk
         if lng:
             return lng
-        else:
-            return itu
+        return "None"
+
 
     def get_regularity(self, days_row: str) -> List[int] | str:
         #dayday - 4pismena 2dny
@@ -145,3 +146,29 @@ class EibiParser(Parser):
         if weekday is None:
             raise NotWeekdayPeriodError()
         return weekday
+
+def readme_language_code_extract_to_json(lines) -> str:
+    raw_data = raw_language_code_parser(lines)
+    clear_data = {}
+    for row in raw_data:
+        row = row.strip().strip("\n")
+        row = row.rsplit("(")[0].rsplit(":")[0].split('  ')
+        clear_data[row[0].strip(" ")] = row[-1].strip(" ")
+
+    with open("language_codes.json", 'w') as json_file:
+        json.dump(clear_data, json_file)
+    return 'language_codes.json'
+
+
+def raw_language_code_parser(lines: list[str]) -> list[str]:
+    append_zone = False
+    raws_language_data = []
+    for line in lines:
+        if "-CW   Morse Station" in line:
+            append_zone = True
+        if "II) Country codes." in line:
+            append_zone = False
+            break
+        if append_zone:
+            raws_language_data.append(line)
+    return raws_language_data
