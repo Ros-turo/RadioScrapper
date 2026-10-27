@@ -1,7 +1,13 @@
+import sys
+
+from PySide6.QtWidgets import QApplication
+
 from radioscraper.eibi.http_layer import EibiAPI
 from radioscraper.eibi.parser import EibiParser, LanguageCodesParser
 from radioscraper.settings import settings
 import os
+
+from radioscraper.ui.main_window import MainWindow
 
 
 def main() -> None:
@@ -22,16 +28,15 @@ def main() -> None:
         code_parser(f)
 
 
-
-
-
-
     ## Station parser
     parser = EibiParser(fn=settings.CSV_FILE)
     broadcast = parser.parse_file()
-    print(broadcast)
 
     #GUI
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
 
 if __name__ == '__main__':
     main()

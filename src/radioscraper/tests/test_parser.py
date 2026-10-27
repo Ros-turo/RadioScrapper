@@ -72,5 +72,6 @@ def test_eibi_parser_get_regularity(
 
     assert regularity == expected_value
 
+## tests na get_language
 
-
+## tests na LanguageParser
