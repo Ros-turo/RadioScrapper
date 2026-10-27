@@ -7,4 +7,7 @@ class Settings():
     CSV_FILE:str = "stations.csv"
     EIBI_README_FILE:str = "eibi_readme.txt"
 
+    README_CODE_INDENT: int = 3
+
+
 settings = Settings() # type:ignore [call-arg]

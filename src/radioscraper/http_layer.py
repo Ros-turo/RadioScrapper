@@ -35,7 +35,7 @@ class EibiAPI(StationAPI):
     def write_data_to_csv(self, fn: str, data: bytes | str) -> None:
         if isinstance(data, bytes):
             data = self.bytes_to_str(data)
-        with open(fn, "w") as f:
+        with open(fn, "w", encoding='latin-1') as f:
             f.write(data)
 
     def write_readme(self) -> None:

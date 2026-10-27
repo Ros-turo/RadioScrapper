@@ -6,11 +6,12 @@ import pytest
 import os
 from radioscraper.http_layer import StationAPI
 from radioscraper.parser import EibiParser
+from radioscraper.settings import settings
 
 
 class MockAPI(StationAPI):
 
-    def get_data(self) -> str:
+    def get_station_data(self) -> str:
         return ("kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35;Start:60;Stop:60;\r\n"
                 "16.3;0000-2400;;IND;VTX1 Indian Navy;;SAs;v;1;;")
 
@@ -26,7 +27,7 @@ class MockAPI(StationAPI):
 @pytest.fixture
 def test_mock_data() -> Generator[None, None, None]:
     mock_api = MockAPI()
-    data = mock_api.get_data()
+    data = mock_api.get_station_data()
     mock_api.write_data_to_csv("test.csv", data)
     yield
     os.remove("test.csv")
@@ -71,4 +72,6 @@ def test_eibi_parser_get_regularity(
     regularity = parser.get_regularity(mock_days)
 
     assert regularity == expected_value
+
+
 

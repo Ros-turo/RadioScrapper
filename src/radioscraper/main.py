@@ -2,7 +2,7 @@ from io import StringIO
 from typing import List
 
 from radioscraper.http_layer import EibiAPI
-from radioscraper.parser import EibiParser, readme_language_code_extract_to_json
+from radioscraper.parser import EibiParser, LanguageCodesParser
 from radioscraper.settings import settings
 import os
 
@@ -20,14 +20,19 @@ def main() -> None:
 
     #Parsers
     ## Readme parser
-    with open(settings.EIBI_README_FILE, 'r') as f:
-        readme_language_code_extract_to_json(f)
+    code_parser = LanguageCodesParser()
+    with open(settings.EIBI_README_FILE, 'r', encoding='utf-8') as f:
+        code_parser(f)
+
+
+
 
 
 
     ## Station parser
     parser = EibiParser(fn=settings.CSV_FILE)
     broadcast = parser.parse_file()
+    print(broadcast)
 
     #GUI
 
