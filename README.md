@@ -17,3 +17,7 @@ Main language of project is python
 You have filter for looking, choose station, language or/and time of programs.
 Application will return you table with programs.
 When you click on some program, application redirect you to streaming site
+
+---
+## What to fix
+URL for csv file is non stabile
