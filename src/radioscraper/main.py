@@ -1,5 +1,5 @@
-from radioscraper.http_layer import EibiAPI
-from radioscraper.parser import EibiParser, LanguageCodesParser
+from radioscraper.eibi.http_layer import EibiAPI
+from radioscraper.eibi.parser import EibiParser, LanguageCodesParser
 from radioscraper.settings import settings
 import os
 

@@ -1,6 +1,6 @@
 from requests import HTTPError
 
-from radioscraper.http_layer import StationAPI, EibiAPI
+from radioscraper.eibi.http_layer import StationAPI, EibiAPI
 from radioscraper.settings import settings
 
 def test_init_eibi_api_instance() -> None:

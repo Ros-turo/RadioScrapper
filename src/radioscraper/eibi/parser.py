@@ -8,7 +8,7 @@ from io import TextIOWrapper
 from typing import List, cast
 
 from radioscraper.exceptions import NotWeekdayPeriodError
-from radioscraper.model import Broadcast, StationData
+from radioscraper.eibi.model import Broadcast, StationData
 from radioscraper.settings import settings
 
 

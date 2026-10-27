@@ -4,8 +4,8 @@ from typing import Generator, List
 
 import pytest
 import os
-from radioscraper.http_layer import StationAPI
-from radioscraper.parser import EibiParser
+from radioscraper.eibi.http_layer import StationAPI
+from radioscraper.eibi.parser import EibiParser
 
 
 class MockAPI(StationAPI):

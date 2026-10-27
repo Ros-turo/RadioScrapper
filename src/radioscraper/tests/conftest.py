@@ -1,7 +1,7 @@
 import pytest
 import os
-from radioscraper.http_layer import EibiAPI
-from radioscraper.parser import EibiParser
+from radioscraper.eibi.http_layer import EibiAPI
+from radioscraper.eibi.parser import EibiParser
 
 
 @pytest.fixture
