@@ -1,10 +1,7 @@
-import pytest
 from requests import HTTPError
 
-from radioscraper.exceptions import InvalidURL
 from radioscraper.http_layer import StationAPI, EibiAPI
 from radioscraper.settings import settings
-import os
 
 def test_init_eibi_api_instance() -> None:
     api = EibiAPI()

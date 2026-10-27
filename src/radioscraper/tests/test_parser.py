@@ -6,7 +6,6 @@ import pytest
 import os
 from radioscraper.http_layer import StationAPI
 from radioscraper.parser import EibiParser
-from radioscraper.settings import settings
 
 
 class MockAPI(StationAPI):
