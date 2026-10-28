@@ -10,4 +10,4 @@ class Settings():
     README_CODE_INDENT: int = 3
 
 
-settings = Settings() # type:ignore [call-arg]
+settings = Settings()

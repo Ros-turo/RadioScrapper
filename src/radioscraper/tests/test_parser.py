@@ -43,7 +43,7 @@ def test_eibi_parser_init(test_mock_data: None) -> None:
         ("0730-1000", (time(7, 30), time(10, 00))),
         ("0000-2400", (time(0,0), time(23,59)))
     ])
-def test_eibi_parser_get_time(test_mock_data: None, mock_time:str, excepted_tuple: tuple[time]) -> None:
+def test_eibi_parser_get_time(test_mock_data: None, mock_time:str, excepted_tuple: tuple[time, time]) -> None:
     parser = EibiParser(fn="test.csv")
     returned_tuple = parser.get_time(mock_time)
 

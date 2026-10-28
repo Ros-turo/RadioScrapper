@@ -16,7 +16,7 @@ class StationData:
 class Broadcast:
 
     def __init__(self) -> None:
-        self.broadcast_list = []
+        self.broadcast_list: List[StationData] = []
 
     def __str__(self) -> str:
         return str(self.broadcast_list)

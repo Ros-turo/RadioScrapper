@@ -1,9 +1,11 @@
 import csv
 import json
+from collections.abc import Sequence
 from datetime import  time
 import os
 from abc import ABC, abstractmethod
-from typing import List
+from io import TextIOWrapper
+from typing import List, cast
 
 from radioscraper.exceptions import NotWeekdayPeriodError
 from radioscraper.model import Broadcast, StationData
@@ -24,7 +26,7 @@ class Parser(ABC):
     def parse_file(self) -> Broadcast: ...
 
     @abstractmethod
-    def parse_row(self, row) -> StationData: ...
+    def parse_row(self, row: List[str]) -> StationData: ...
 
     @abstractmethod
     def get_time(self, time_row: str) -> tuple[time, time]: ...
@@ -55,7 +57,7 @@ class EibiParser(Parser):
 
         return broadcast
 
-    def parse_row(self, row: list) -> StationData:
+    def parse_row(self, row: List[str]) -> StationData:
         frequency = self.get_frequency(row[0])
         start_time, end_time = self.get_time(row[1])
         regularity = self.get_regularity(row[2])
@@ -71,13 +73,13 @@ class EibiParser(Parser):
         )
 
     def get_time(self, time_row: str) -> tuple[time, time]:
-        start_time, end_time = time_row.split('-')
+        start_time_str, end_time_str = time_row.split('-')
 
-        start_time = time(int(start_time[:2]), int(start_time[2:]))
+        start_time = time(int(start_time_str[:2]), int(start_time_str[2:]))
 
-        if end_time[:2] == "24":
-            end_time = "2359"
-        end_time = time(int(end_time[:2]), int(end_time[2:]))
+        if end_time_str[:2] == "24":
+            end_time_str = "2359"
+        end_time = time(int(end_time_str[:2]), int(end_time_str[2:]))
 
         return start_time, end_time
 
@@ -163,13 +165,13 @@ class LanguageCodesParser:
 
 
 
-    def __call__(self, lines) -> None:
+    def __call__(self, lines: Sequence[str] | TextIOWrapper) -> None:
         raw_data = self.raw_language_code_data(lines)
         clear_data = self.language_code_data_cleaner(raw_data)
         self.write_language_code_data_to_json(clear_data)
 
 
-    def raw_language_code_data(self, lines: list[str]) -> list[str]:
+    def raw_language_code_data(self, lines: Sequence[str] | TextIOWrapper) -> list[str]:
         append_zone = False
         raw_language_data = []
         for line in lines:
@@ -182,15 +184,15 @@ class LanguageCodesParser:
                 raw_language_data.append(line)
         return raw_language_data
 
-    def language_code_data_cleaner(self, raw_data: list[str]) -> dict[str, str]:
+    def language_code_data_cleaner(self, raw_data: Sequence[str]) -> dict[str, str]:
         clear_data = {}
         for row in raw_data:
             if len(row) - len(row.lstrip(' ')) != settings.README_CODE_INDENT:
                 continue
             row = row.rstrip()
-            row = row.rsplit("(")[0].rsplit(":")[0].rsplit("=")[0].rsplit("/")[0].split(" ")
-            row = [el for el in row if el and el != "program"]
-            clear_data[row[0]] = " ".join(row[1:])
+            list_of_elements = row.rsplit("(")[0].rsplit(":")[0].rsplit("=")[0].rsplit("/")[0].split(" ")
+            clear_rows = [el for el in list_of_elements if el and el != "program"]
+            clear_data[clear_rows[0]] = " ".join(clear_rows[1:])
         return clear_data
 
 
@@ -202,4 +204,4 @@ class LanguageCodesParser:
     def json_to_dict(self) -> dict[str, str]:
         with open('language_codes.json', 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
-            return data
+            return cast(dict[str, str], data)
