@@ -4,6 +4,7 @@ from collections.abc import Sequence
 from datetime import  time
 import os
 from abc import ABC, abstractmethod
+from enum import Enum
 from io import TextIOWrapper
 from typing import List, cast
 
@@ -11,15 +12,22 @@ from radioscraper.exceptions import NotWeekdayPeriodError
 from radioscraper.eibi.model import Broadcast, StationData
 from radioscraper.settings import settings
 
-WEEKDAY_TO_INT = {
-    "Mo": 1,
-    "Tu": 2,
-    "We": 3,
-    "Th": 4,
-    "Fr": 5,
-    "Sa": 6,
-    "Su": 0
-}
+
+class Weekday(Enum):
+    Mo = 1
+    Tu = 2
+    We = 3
+    Th = 4
+    Fr = 5
+    Sa = 6
+    Su = 0
+
+    @staticmethod
+    def get_weekday_int(day_of_week: str) -> int:
+        try:
+            return cast(int, getattr(Weekday, day_of_week).value)
+        except AttributeError:
+            raise NotWeekdayPeriodError(day_of_week)
 
 class Parser(ABC):
 
@@ -154,10 +162,7 @@ class EibiParser(Parser):
 
     @staticmethod
     def get_weekday_int_from_string_abb(days_row: str) -> int:
-        weekday = WEEKDAY_TO_INT.get(days_row, None)
-        if weekday is None:
-            raise NotWeekdayPeriodError()
-        return weekday
+        return Weekday.get_weekday_int(days_row)
 
 
 class LanguageCodesParser:
