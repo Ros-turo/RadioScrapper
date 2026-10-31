@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, Field
 from datetime import time
 from typing import List
 
@@ -20,6 +20,12 @@ class Broadcast:
 
     def __str__(self) -> str:
         return str(self.broadcast_list)
+
+    def __len__(self) -> int:
+        return len(self.broadcast_list)
+
+    def __getitem__(self, index: int) -> StationData:
+        return self.broadcast_list[index]
 
     def append_station(self, station: StationData) -> None:
         self.broadcast_list.append(station)

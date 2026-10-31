@@ -11,6 +11,15 @@ from radioscraper.exceptions import NotWeekdayPeriodError
 from radioscraper.eibi.model import Broadcast, StationData
 from radioscraper.settings import settings
 
+WEEKDAY_TO_INT = {
+    "Mo": 1,
+    "Tu": 2,
+    "We": 3,
+    "Th": 4,
+    "Fr": 5,
+    "Sa": 6,
+    "Su": 0
+}
 
 class Parser(ABC):
 
@@ -93,8 +102,7 @@ class EibiParser(Parser):
         if not lng:
             return None
 
-        language_parser = LanguageCodesParser()
-        language_codes = language_parser.json_to_dict()
+        language_codes = language_json_to_dict()
         language_array = lng.split(",")
         language_result = []
         for language_code in language_array:
@@ -119,7 +127,7 @@ class EibiParser(Parser):
 
         if len(days_row) == 2:
             try:
-                weekday = self.get_weekday_from_string_abb(days_row)
+                weekday = self.get_weekday_int_from_string_abb(days_row)
                 return [weekday]
             except NotWeekdayPeriodError:
                 return "irregular"
@@ -127,7 +135,7 @@ class EibiParser(Parser):
         if len(days_row) == 4:
             days = [days_row[:2], days_row[2:]]
             try:
-                weekdays = [self.get_weekday_from_string_abb(day) for day in days]
+                weekdays = [self.get_weekday_int_from_string_abb(day) for day in days]
                 return sorted(weekdays)
             except NotWeekdayPeriodError:
                 return "irregular"
@@ -136,7 +144,7 @@ class EibiParser(Parser):
             period = days_row.split("-")
             if len(period) == 2:
                 try:
-                    weekdays = [self.get_weekday_from_string_abb(day) for day in period]
+                    weekdays = [self.get_weekday_int_from_string_abb(day) for day in period]
                     return [day for day in range(weekdays[0], weekdays[1] + 1)]
                 except NotWeekdayPeriodError:
                     return "irregular"
@@ -145,17 +153,8 @@ class EibiParser(Parser):
         return "irregular"
 
     @staticmethod
-    def get_weekday_from_string_abb(days_row: str) -> int:
-        weekday_dict = {
-            "Mo": 1,
-            "Tu": 2,
-            "We": 3,
-            "Th": 4,
-            "Fr": 5,
-            "Sa": 6,
-            "Su": 0
-        }
-        weekday = weekday_dict.get(days_row, None)
+    def get_weekday_int_from_string_abb(days_row: str) -> int:
+        weekday = WEEKDAY_TO_INT.get(days_row, None)
         if weekday is None:
             raise NotWeekdayPeriodError()
         return weekday
@@ -178,7 +177,6 @@ class LanguageCodesParser:
             if "-CW   Morse Station" in line:
                 append_zone = True
             if "II) Country codes." in line:
-                append_zone = False
                 break
             if append_zone:
                 raw_language_data.append(line)
@@ -201,7 +199,7 @@ class LanguageCodesParser:
             json.dump(data, json_file, ensure_ascii=False, indent=2)
         return 'language_codes.json'
 
-    def json_to_dict(self) -> dict[str, str]:
-        with open('language_codes.json', 'r', encoding='utf-8') as json_file:
-            data = json.load(json_file)
-            return cast(dict[str, str], data)
+def language_json_to_dict() -> dict[str, str]:
+    with open('language_codes.json', 'r', encoding='utf-8') as json_file:
+        data = json.load(json_file)
+        return cast(dict[str, str], data)

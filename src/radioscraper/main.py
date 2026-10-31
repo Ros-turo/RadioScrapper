@@ -34,7 +34,7 @@ def main() -> None:
 
     #GUI
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow(broadcast)
     window.show()
     sys.exit(app.exec())
 
