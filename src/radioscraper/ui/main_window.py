@@ -23,22 +23,27 @@ class MainWindow(QMainWindow):
 
         self.table = QTableView()
 
-        filters = QHBoxLayout()
-        filters.addWidget(QLabel("Station: "))
-        filters.addWidget(self.search, stretch=1)
-        filters.addWidget(QLabel("Language: "))
-        filters.addWidget(self.language, stretch=1)
-        filters.addWidget(self.irregular)
+        self.filters = QHBoxLayout()
+        self.add_widgets_to_filters_box()
 
-        root = QVBoxLayout()
-        root.addLayout(filters)
-        root.addWidget(self.table)
+        self.root = QVBoxLayout()
+        self.root.addLayout(self.filters)
+        self.root.addWidget(self.table)
 
         central = QWidget()
-        central.setLayout(root)
+        central.setLayout(self.root)
         self.setCentralWidget(central)
 
         self.statusBar().showMessage("Ready")
+
+
+    def add_widgets_to_filters_box(self) -> None:
+        self.filters.addWidget(QLabel("Station: "))
+        self.filters.addWidget(self.search, stretch=1)
+        self.filters.addWidget(QLabel("Language: "))
+        self.filters.addWidget(self.language, stretch=1)
+        self.filters.addWidget(self.irregular)
+
 
     def show_station_in_status_bar(self, text: str) -> None:
         self.statusBar().showMessage(text)
