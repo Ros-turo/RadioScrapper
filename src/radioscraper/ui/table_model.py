@@ -1,3 +1,4 @@
+import typing
 
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex, QPersistentModelIndex, QObject
 
@@ -13,10 +14,22 @@ class BroadcastTableModel(QAbstractTableModel):
         self.rows = rows
 
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
-        return len(self.rows)
+        return 0 if parent.isValid() else len(self.rows)
 
     def columnCount(self, parent: QModelIndex | QPersistentModelIndex  = QModelIndex()) -> int:
-        return len(self.COLUMNS)
+        return 0 if parent.isValid() else len(self.COLUMNS)
+
+    def headerData(
+            self,
+            section: int,
+            orientation: Qt.Orientation,
+            role: int = Qt.ItemDataRole.DisplayRole
+    ) -> str | None:
+
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
+            return self.COLUMNS[section]
+        return None
+
 
     def data(self, index: QModelIndex | QPersistentModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> str | float | None:
         if role == Qt.ItemDataRole.DisplayRole:
