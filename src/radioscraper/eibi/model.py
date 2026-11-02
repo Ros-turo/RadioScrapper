@@ -13,6 +13,16 @@ class StationData:
     language: List[str] | None = None
 
 
+    def get_attribute(self, attribute: str) -> str | None:
+        try:
+            value = self.__getattribute__(attribute)
+        except KeyError:
+            return None
+        else:
+            return str(value)
+
+
+
 class Broadcast:
 
     def __init__(self) -> None:
@@ -29,4 +39,5 @@ class Broadcast:
 
     def append_station(self, station: StationData) -> None:
         self.broadcast_list.append(station)
+
 
