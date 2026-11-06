@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from radioscraper.eibi.filtering import on_air
+from radioscraper.eibi.filtering import on_air, yesterday_broadcast
 from radioscraper.eibi.model import Broadcast, StationData
 
 
@@ -29,3 +29,9 @@ def test_filtering_on_air(mock_broadcast: Broadcast) -> None:
             assert station.start_time >= now >= station.end_time
     print(filtered_broadcast)
 
+def test_yesterday_stations(mock_broadcast: Broadcast) -> None:
+    today = datetime.datetime.today()
+    yesterday = today - datetime.timedelta(days=1)
+    yesterday_weekday = yesterday.weekday()
+    # yesterday_broadcast_list = yesterday_broadcast(mock_broadcast, today)
+    #TODO: dodelat ..
