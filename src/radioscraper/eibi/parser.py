@@ -6,7 +6,7 @@ import os
 from abc import ABC, abstractmethod
 from enum import Enum
 from io import TextIOWrapper
-from typing import List, cast
+from typing import List, cast, Literal
 
 from radioscraper.exceptions import NotWeekdayPeriodError
 from radioscraper.eibi.model import Broadcast, StationData
@@ -122,7 +122,7 @@ class EibiParser(Parser):
 
 
 
-    def get_regularity(self, days_row: str) -> List[int] | str:
+    def get_regularity(self, days_row: str) -> List[int] |  Literal["irregular"] | Literal["Last7"]:
         #dayday - 4pismena 2dny
         #Last7 - posledni nedele, today + weekday of 1fs in month(except Sunday, -1) = 28
         EVERY_DAY = [0,1,2,3,4,5,6]

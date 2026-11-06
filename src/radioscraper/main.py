@@ -31,6 +31,7 @@ def main() -> None:
     ## Station parser
     parser = EibiParser(fn=settings.CSV_FILE)
     broadcast = parser.parse_file()
+    print(broadcast)
 
     #GUI
     app = QApplication(sys.argv)
