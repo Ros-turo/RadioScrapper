@@ -2,39 +2,32 @@ from datetime import time, datetime, timedelta
 
 from radioscraper.eibi.model import Broadcast
 
-
-def today_broadcast(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
-    today_broadcast_instance = Broadcast()
-    today_weekday = target_day.weekday()
-    for station in origin_broadcast:
-        if (isinstance(station.regularity, list)) and (today_weekday in station.regularity):
-            today_broadcast_instance.append_station(station)
-    return today_broadcast_instance
-
-def today_broadcast_on_air(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
+def on_air_without_bridging(broadcast: Broadcast, target_time: time) -> Broadcast:
     on_air_broadcast = Broadcast()
-    now = target_day.time()
-    today_broadcast_list = today_broadcast(origin_broadcast, target_day)
-    for station in today_broadcast_list:
-        if station.start_time <= now <= station.end_time:
+    for station in broadcast:
+        if station.start_time <= target_time <= station.end_time:
             on_air_broadcast.append_station(station)
     return on_air_broadcast
 
-
-def yesterday_broadcast(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
-    yesterday_broadcast_instance = Broadcast()
-    yesterday_weekday = (target_day - timedelta(days=1)).weekday()
+def target_day_broadcast(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
+    target_dat_broadcast_instance = Broadcast()
+    target_day_weekday = target_day.weekday()
     for station in origin_broadcast:
-        if isinstance(station.regularity, list):
-            if yesterday_weekday in station.regularity:
-                yesterday_broadcast_instance.append_station(station)
-    return yesterday_broadcast_instance
+        if (isinstance(station.regularity, list)) and (target_day_weekday in station.regularity):
+            target_dat_broadcast_instance.append_station(station)
+    return target_dat_broadcast_instance
+
+def today_broadcast_on_air(origin_broadcast: Broadcast, today: datetime) -> Broadcast:
+    now = today.time()
+    today_broadcast_list = target_day_broadcast(origin_broadcast, today)
+    on_air_broadcast = on_air_without_bridging(today_broadcast_list, now)
+    return on_air_broadcast
 
 
-def yesterday_broadcast_on_air(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
+def yesterday_broadcast_on_air(origin_broadcast: Broadcast, yesterday: datetime) -> Broadcast:
     yesterday_on_air_broadcast = Broadcast()
-    now = target_day.time()
-    yesterday_broadcast_list = yesterday_broadcast(origin_broadcast, target_day)
+    now = yesterday.time()
+    yesterday_broadcast_list = target_day_broadcast(origin_broadcast, yesterday)
     for station in yesterday_broadcast_list:
         if now <= station.end_time:
             yesterday_on_air_broadcast.append_station(station)
