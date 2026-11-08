@@ -3,12 +3,6 @@ from datetime import time, datetime, timedelta
 from radioscraper.eibi.model import Broadcast
 
 
-# def on_air(broadcast: Broadcast, target_day: datetime, return_irregularity: bool = True) -> Broadcast:
-#     #TODO: filtraci pro dnesni,
-#     #TODO: vcerejsi
-#     #TODO: neregularni data
-
-
 def today_broadcast(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
     today_broadcast_instance = Broadcast()
     today_weekday = target_day.weekday()
@@ -35,3 +29,8 @@ def yesterday_broadcast(origin_broadcast: Broadcast, target_day: datetime) -> Br
             if yesterday_weekday in station.regularity:
                 yesterday_broadcast_instance.append_station(station)
     return yesterday_broadcast_instance
+
+# def on_air(broadcast: Broadcast, target_day: datetime, return_irregularity: bool = True) -> Broadcast:
+#     today_on_air = today_broadcast_on_air(broadcast, target_day)
+#     #TODO: vcerejsi
+#     #TODO: neregularni data
