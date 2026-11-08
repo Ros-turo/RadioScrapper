@@ -19,6 +19,7 @@ def mock_broadcast() -> Broadcast:
         broadcast.append_station(station)
     return broadcast
 
+# TODO: testovat i negaci
 
 def test_today_stations(mock_broadcast: Broadcast) -> None:
     today = datetime.datetime.today()
