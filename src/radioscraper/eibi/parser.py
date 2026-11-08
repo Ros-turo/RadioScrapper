@@ -14,13 +14,13 @@ from radioscraper.settings import settings
 
 
 class Weekday(Enum):
-    Mo = 1
-    Tu = 2
-    We = 3
-    Th = 4
-    Fr = 5
-    Sa = 6
-    Su = 0
+    Mo = 0
+    Tu = 1
+    We = 2
+    Th = 3
+    Fr = 4
+    Sa = 5
+    Su = 6
 
     @staticmethod
     def get_weekday_int(day_of_week: str) -> int:

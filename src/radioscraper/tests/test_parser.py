@@ -53,10 +53,10 @@ def test_eibi_parser_get_time(test_mock_data: None, mock_time:str, excepted_tupl
 @pytest.mark.parametrize(
     argnames=["mock_days", "expected_value"],
     argvalues=[(None, [0,1,2,3,4,5,6]),
-               ("Mo-Fr", [1,2,3,4,5]),
-               ('Th', [4]),
+               ("Mo-Fr", [0,1,2,3,4]),
+               ('Th', [3]),
                ("Wa", "irregular"),
-               ("SaSu", [0,6]),
+               ("SaSu", [5,6]),
                ("irr", "irregular"),
                ("harm", "irregular"),
                ("Last7", "Last7"),
