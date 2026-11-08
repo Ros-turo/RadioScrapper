@@ -39,6 +39,16 @@ def yesterday_broadcast_on_air(origin_broadcast: Broadcast, target_day: datetime
         if now <= station.end_time:
             yesterday_on_air_broadcast.append_station(station)
     return yesterday_on_air_broadcast
+
+
+def get_irregular_broadcast(origin_broadcast: Broadcast) -> Broadcast:
+    irregular_broadcast_instance = Broadcast()
+    for station in origin_broadcast:
+        if station.regularity == "irregular":
+            irregular_broadcast_instance.append_station(station)
+    return irregular_broadcast_instance
+
+
 # def on_air(broadcast: Broadcast, target_day: datetime, return_irregularity: bool = True) -> Broadcast:
 #     today_on_air = today_broadcast_on_air(broadcast, target_day)
 #     #TODO: vcerejsi

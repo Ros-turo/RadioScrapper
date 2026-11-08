@@ -3,7 +3,7 @@ import datetime
 import pytest
 
 from radioscraper.eibi.filtering import yesterday_broadcast, today_broadcast, today_broadcast_on_air, \
-    yesterday_broadcast_on_air
+    yesterday_broadcast_on_air, get_irregular_broadcast
 from radioscraper.eibi.model import Broadcast, StationData
 
 
@@ -54,3 +54,10 @@ def test_yesterday_broadcast_on_air(mock_broadcast: Broadcast) -> None:
     on_air_yesterday = yesterday_broadcast_on_air(mock_broadcast, today)
     for station in on_air_yesterday:
         assert now <= station.end_time
+
+
+def test_get_irregular_on_air(mock_broadcast: Broadcast) -> None:
+    irregular_broadcast = get_irregular_broadcast(mock_broadcast)
+    for station in mock_broadcast:
+        if station.regularity == "irregular":
+            assert station in irregular_broadcast
