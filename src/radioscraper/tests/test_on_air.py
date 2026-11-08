@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from radioscraper.eibi.filtering import on_air, yesterday_broadcast
+from radioscraper.eibi.filtering import yesterday_broadcast, today_broadcast
 from radioscraper.eibi.model import Broadcast, StationData
 
 
@@ -19,15 +19,15 @@ def mock_broadcast() -> Broadcast:
         broadcast.append_station(station)
     return broadcast
 
-def test_filtering_on_air(mock_broadcast: Broadcast) -> None:
-    today = datetime.datetime.now()
-    now = today.time()
-    filtered_broadcast = on_air(mock_broadcast, target_day=today)
-    for station in filtered_broadcast:
-        if not station.is_day_bridging:
-            assert station.start_time <= now <= station.end_time
-        else:
-            assert station.start_time >= now >= station.end_time
+
+def test_today_stations(mock_broadcast: Broadcast) -> None:
+    today = datetime.datetime.today()
+    today_weekday = today.weekday()
+    today_broadcast_list = today_broadcast(mock_broadcast, target_day=today)
+    for station in today_broadcast_list:
+        assert isinstance(station.regularity, list)
+        assert today_weekday in station.regularity
+
 
 def test_yesterday_stations(mock_broadcast: Broadcast) -> None:
     today = datetime.datetime.today()
