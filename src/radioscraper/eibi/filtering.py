@@ -11,6 +11,7 @@ def on_air_without_bridging(broadcast: Broadcast, target_time: time) -> Broadcas
     return on_air_broadcast
 
 def on_air_irregular(station: StationData, target_time:time) -> bool:
+    #TODO: check type with own exception(change NotImplementedError)
     if station.regularity == "irregular":
         match station.is_day_bridging:
             case True:
@@ -61,7 +62,13 @@ def irregular_broadcast_on_air(origin_broadcast: Broadcast, target_time: time) -
 
 
 
-# def on_air(broadcast: Broadcast, target_day: datetime, return_irregularity: bool = True) -> Broadcast:
-#     today_on_air = today_broadcast_on_air(broadcast, target_day)
-#     #TODO: vcerejsi
-#     #TODO: neregularni data
+def on_air_total_stations(broadcast: Broadcast, target_day: datetime, return_irregularity: bool = True) -> Broadcast:
+    today_on_air = today_broadcast_on_air(broadcast, target_day)
+    yesterday_on_air = yesterday_broadcast_on_air(broadcast, target_day)
+    total_on_air = yesterday_on_air + today_on_air
+    if return_irregularity:
+        target_time = target_day.time()
+        irregular_on_air = irregular_broadcast_on_air(broadcast, target_time)
+        total_on_air += irregular_on_air
+    return total_on_air
+

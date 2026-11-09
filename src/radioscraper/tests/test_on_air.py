@@ -3,7 +3,7 @@ import datetime
 import pytest
 
 from radioscraper.eibi.filtering import target_day_broadcast, today_broadcast_on_air, \
-    yesterday_broadcast_on_air, get_irregular_broadcast, irregular_broadcast_on_air
+    yesterday_broadcast_on_air, get_irregular_broadcast, on_air_irregular, irregular_broadcast_on_air, on_air_total_stations
 from radioscraper.eibi.model import Broadcast, StationData
 
 
@@ -90,3 +90,30 @@ def test_irregular_on_air(mock_broadcast: Broadcast) -> None:
             case False:
                 if station.start_time <= now <= station.end_time:
                     assert station in irregular_on_air
+
+def test_on_air_total_stations_with_irregular(mock_broadcast: Broadcast) -> None:
+    today = datetime.datetime.today()
+    now = today.time()
+
+    today_weekday = today.weekday()
+    yesterday_weekday = (today - datetime.timedelta(days=1)).weekday()
+
+    assertation_broadcast = on_air_total_stations(mock_broadcast, today, True)
+    print(assertation_broadcast)
+
+    for station in mock_broadcast:
+        if station.regularity == "Last7":
+            raise NotImplementedError
+        elif station.regularity == "irregular" and on_air_irregular(station, target_time=now):
+            assert station in assertation_broadcast
+            assertation_broadcast.remove_station(station)
+        elif isinstance(station.regularity, list):
+            if yesterday_weekday in station.regularity and station.end_time >= now:
+                assert station in assertation_broadcast
+                assertation_broadcast.remove_station(station)
+            if (today_weekday in station.regularity and station.start_time <= now <= station.end_time):
+                assert station in assertation_broadcast
+                assertation_broadcast.remove_station(station)
+        else:
+            assert station not in assertation_broadcast
+    assert len(assertation_broadcast) == 0

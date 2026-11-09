@@ -37,6 +37,13 @@ class Broadcast:
     def __len__(self) -> int:
         return len(self.broadcast_list)
 
+    def __add__(self, other: object) -> 'Broadcast':
+        if isinstance(other, Broadcast):
+            broadcast = Broadcast()
+            broadcast.broadcast_list = self.broadcast_list + other.broadcast_list
+            return broadcast
+        return NotImplemented
+
     def __getitem__(self, index: int) -> StationData:
         return self.broadcast_list[index]
 
@@ -47,4 +54,5 @@ class Broadcast:
     def append_station(self, station: StationData) -> None:
         self.broadcast_list.append(station)
 
-
+    def remove_station(self, station: StationData) -> None:
+        self.broadcast_list.remove(station)
