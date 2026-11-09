@@ -26,10 +26,10 @@ def today_broadcast_on_air(origin_broadcast: Broadcast, today: datetime) -> Broa
 
 def yesterday_broadcast_on_air(origin_broadcast: Broadcast, yesterday: datetime) -> Broadcast:
     yesterday_on_air_broadcast = Broadcast()
-    now = yesterday.time()
+    air_time = yesterday.time()
     yesterday_broadcast_list = target_day_broadcast(origin_broadcast, yesterday)
     for station in yesterday_broadcast_list:
-        if now <= station.end_time:
+        if air_time <= station.end_time:
             yesterday_on_air_broadcast.append_station(station)
     return yesterday_on_air_broadcast
 
@@ -40,6 +40,19 @@ def get_irregular_broadcast(origin_broadcast: Broadcast) -> Broadcast:
         if station.regularity == "irregular":
             irregular_broadcast_instance.append_station(station)
     return irregular_broadcast_instance
+
+def irregular_broadcast_on_air(origin_broadcast: Broadcast, target_time: time) -> Broadcast:
+    on_air = Broadcast()
+    irregular_broadcast = get_irregular_broadcast(origin_broadcast)
+    for station in irregular_broadcast:
+        if station.is_day_bridging and (station.start_time >= target_time <= station.end_time):
+            on_air.append_station(station)
+        elif not station.is_day_bridging and station.start_time <= target_time <= station.end_time:
+            on_air.append_station(station)
+        else:
+            continue
+    return on_air
+
 
 
 # def on_air(broadcast: Broadcast, target_day: datetime, return_irregularity: bool = True) -> Broadcast:

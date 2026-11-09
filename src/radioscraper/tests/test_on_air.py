@@ -3,18 +3,26 @@ import datetime
 import pytest
 
 from radioscraper.eibi.filtering import target_day_broadcast, today_broadcast_on_air, \
-    yesterday_broadcast_on_air, get_irregular_broadcast
+    yesterday_broadcast_on_air, get_irregular_broadcast, irregular_broadcast_on_air
 from radioscraper.eibi.model import Broadcast, StationData
 
 
 @pytest.fixture
 def mock_broadcast() -> Broadcast:
     station_data = [
-        StationData(frequency=21760.0, start_time=datetime.time(11, 0), end_time=datetime.time(11, 45), regularity="irregular", station='Radio Vaticana', language=['Mandarin']),
-        StationData(frequency=21760.0, start_time=datetime.time(12, 30), end_time=datetime.time(12, 50), regularity=[0, 1, 2, 3, 4, 5, 6], station='Radio Vaticana', language=['Russian']),
-        StationData(frequency=21775.0, start_time=datetime.time(23, 0), end_time=datetime.time(17, 45), regularity=[5], station='Radio Vaticana', language=['Mandarin']),
-        StationData(frequency=21780.0, start_time=datetime.time(23, 0), end_time=datetime.time(14, 0), regularity=[0, 1, 2, 3, 4, 5, 6], station='CNR1 Jammer/Firedrake', language=['Mandarin']),
-        StationData(frequency=21780.0, start_time=datetime.time(0, 0), end_time=datetime.time(23, 59), regularity=[0, 1, 2, 3, 4, 5, 6], station='Sound of Hope', language=['Mandarin']),]
+
+        StationData(frequency=21860.0, start_time=datetime.time(11, 0), end_time=datetime.time(10, 59),
+                    regularity="irregular", station='Radio Vaticana', language=['English']),
+        StationData(frequency=21760.0, start_time=datetime.time(11, 0), end_time=datetime.time(11, 45),
+                    regularity="irregular", station='Radio Vaticana', language=['Mandarin']),
+        StationData(frequency=21760.0, start_time=datetime.time(12, 30), end_time=datetime.time(12, 50),
+                    regularity=[0, 1, 2, 3, 4, 5, 6], station='Radio Vaticana', language=['Russian']),
+        StationData(frequency=21775.0, start_time=datetime.time(23, 0), end_time=datetime.time(17, 45),
+                    regularity=[5], station='Radio Vaticana', language=['Mandarin']),
+        StationData(frequency=21780.0, start_time=datetime.time(23, 0), end_time=datetime.time(14, 0),
+                    regularity=[0, 1, 2, 3, 4, 5, 6], station='CNR1 Jammer/Firedrake', language=['Mandarin']),
+        StationData(frequency=21780.0, start_time=datetime.time(0, 0), end_time=datetime.time(23, 59),
+                    regularity=[0, 1, 2, 3, 4, 5, 6], station='Sound of Hope', language=['Mandarin']),]
     broadcast = Broadcast()
     for station in station_data:
         broadcast.append_station(station)
@@ -54,7 +62,6 @@ def test_yesterday_broadcast_on_air(mock_broadcast: Broadcast) -> None:
     yesterday_weekday = yesterday.weekday()
     now = today.time()
     on_air_yesterday = yesterday_broadcast_on_air(mock_broadcast, yesterday)
-    print(on_air_yesterday)
     for station in mock_broadcast:
         if isinstance(station.regularity, list) and yesterday_weekday in station.regularity and station.end_time >= now:
             assert station in on_air_yesterday
@@ -65,3 +72,21 @@ def test_get_irregular_on_air(mock_broadcast: Broadcast) -> None:
     for station in mock_broadcast:
         if station.regularity == "irregular":
             assert station in irregular_broadcast
+
+
+def test_irregular_on_air(mock_broadcast: Broadcast) -> None:
+    today = datetime.datetime.today()
+    now = today.time()
+    irregular_on_air = irregular_broadcast_on_air(mock_broadcast, target_time=now)
+    print(irregular_on_air)
+    for station in mock_broadcast:
+        if not station.regularity == "irregular":
+            continue
+        match station.is_day_bridging:
+            case True:
+                if station.start_time >= now <= station.end_time:
+                    print("yes")
+                    assert station in irregular_on_air
+            case False:
+                if station.start_time <= now <= station.end_time:
+                    assert station in irregular_on_air
