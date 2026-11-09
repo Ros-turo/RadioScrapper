@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from radioscraper.eibi.filtering import target_day_broadcast, today_broadcast_on_air, \
+from radioscraper.eibi.on_air import target_day_broadcast, today_broadcast_on_air, \
     yesterday_broadcast_on_air, get_irregular_broadcast, on_air_irregular, irregular_broadcast_on_air, on_air_total_stations
 from radioscraper.eibi.model import Broadcast, StationData
 
