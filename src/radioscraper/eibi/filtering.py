@@ -1,6 +1,7 @@
 from datetime import time, datetime, timedelta
 
-from radioscraper.eibi.model import Broadcast
+from radioscraper.eibi.model import Broadcast, StationData
+
 
 def on_air_without_bridging(broadcast: Broadcast, target_time: time) -> Broadcast:
     on_air_broadcast = Broadcast()
@@ -8,6 +9,15 @@ def on_air_without_bridging(broadcast: Broadcast, target_time: time) -> Broadcas
         if station.start_time <= target_time <= station.end_time:
             on_air_broadcast.append_station(station)
     return on_air_broadcast
+
+def on_air_irregular(station: StationData, target_time:time) -> bool:
+    if station.regularity == "irregular":
+        match station.is_day_bridging:
+            case True:
+                return True if station.start_time >= target_time <= station.end_time else False
+            case False:
+                return True if station.start_time <= target_time <= station.end_time else False
+    raise NotImplementedError
 
 def target_day_broadcast(origin_broadcast: Broadcast, target_day: datetime) -> Broadcast:
     target_dat_broadcast_instance = Broadcast()
@@ -45,12 +55,8 @@ def irregular_broadcast_on_air(origin_broadcast: Broadcast, target_time: time) -
     on_air = Broadcast()
     irregular_broadcast = get_irregular_broadcast(origin_broadcast)
     for station in irregular_broadcast:
-        if station.is_day_bridging and (station.start_time >= target_time <= station.end_time):
+        if on_air_irregular(station, target_time):
             on_air.append_station(station)
-        elif not station.is_day_bridging and station.start_time <= target_time <= station.end_time:
-            on_air.append_station(station)
-        else:
-            continue
     return on_air
 
 
