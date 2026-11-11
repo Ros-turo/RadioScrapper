@@ -72,3 +72,12 @@ def on_air_total_stations(broadcast: Broadcast, target_day: datetime, return_irr
         total_on_air += irregular_on_air
     return total_on_air
 
+
+def get_broadcast_by_language(origin_broadcast: Broadcast, language: str) -> Broadcast:
+    filtered_broadcast = Broadcast()
+    for station in origin_broadcast:
+        if station.language is None:
+            continue
+        if language in station.language:
+            filtered_broadcast.append_station(station)
+    return filtered_broadcast

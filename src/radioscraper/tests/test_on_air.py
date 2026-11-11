@@ -3,7 +3,8 @@ import datetime
 import pytest
 
 from radioscraper.eibi.on_air import target_day_broadcast, today_broadcast_on_air, \
-    yesterday_broadcast_on_air, get_irregular_broadcast, on_air_irregular, irregular_broadcast_on_air, on_air_total_stations
+    yesterday_broadcast_on_air, get_irregular_broadcast, on_air_irregular, irregular_broadcast_on_air, \
+    on_air_total_stations, get_broadcast_by_language
 from radioscraper.eibi.model import Broadcast, StationData
 
 
@@ -78,14 +79,12 @@ def test_irregular_on_air(mock_broadcast: Broadcast) -> None:
     today = datetime.datetime.today()
     now = today.time()
     irregular_on_air = irregular_broadcast_on_air(mock_broadcast, target_time=now)
-    print(irregular_on_air)
     for station in mock_broadcast:
         if not station.regularity == "irregular":
             continue
         match station.is_day_bridging:
             case True:
                 if station.start_time >= now <= station.end_time:
-                    print("yes")
                     assert station in irregular_on_air
             case False:
                 if station.start_time <= now <= station.end_time:
@@ -99,7 +98,6 @@ def test_on_air_total_stations_with_irregular(mock_broadcast: Broadcast) -> None
     yesterday_weekday = (today - datetime.timedelta(days=1)).weekday()
 
     assertation_broadcast = on_air_total_stations(mock_broadcast, today, True)
-    print(assertation_broadcast)
 
     for station in mock_broadcast:
         if station.regularity == "Last7":
@@ -117,3 +115,12 @@ def test_on_air_total_stations_with_irregular(mock_broadcast: Broadcast) -> None
         else:
             assert station not in assertation_broadcast
     assert len(assertation_broadcast) == 0
+
+@pytest.mark.parametrize("language", ["Russian", "English"])
+def test_filtering_by_language(mock_broadcast: Broadcast, language: str) -> None:
+    filtered_broadcast = get_broadcast_by_language(mock_broadcast, language)
+    for station in mock_broadcast:
+        if station.language is None:
+            continue
+        if language in station.language:
+            assert station in filtered_broadcast
