@@ -81,3 +81,11 @@ def get_broadcast_by_language(origin_broadcast: Broadcast, language: str) -> Bro
         if language in station.language:
             filtered_broadcast.append_station(station)
     return filtered_broadcast
+
+
+def get_broadcast_by_station(origin_broadcast: Broadcast, station_name: str) -> Broadcast:
+    filtered_broadcast = Broadcast()
+    for station in origin_broadcast:
+        if station.station == station_name:
+            filtered_broadcast.append_station(station)
+    return filtered_broadcast

@@ -4,7 +4,7 @@ import pytest
 
 from radioscraper.eibi.on_air import target_day_broadcast, today_broadcast_on_air, \
     yesterday_broadcast_on_air, get_irregular_broadcast, on_air_irregular, irregular_broadcast_on_air, \
-    on_air_total_stations, get_broadcast_by_language
+    on_air_total_stations, get_broadcast_by_language, get_broadcast_by_station
 from radioscraper.eibi.model import Broadcast, StationData
 
 
@@ -123,4 +123,12 @@ def test_filtering_by_language(mock_broadcast: Broadcast, language: str) -> None
         if station.language is None:
             continue
         if language in station.language:
+            assert station in filtered_broadcast
+
+
+@pytest.mark.parametrize("station_name", ["Radio Vaticana"])
+def test_filtering_by_station(mock_broadcast: Broadcast, station_name: str) -> None:
+    filtered_broadcast = get_broadcast_by_station(mock_broadcast, station_name)
+    for station in mock_broadcast:
+        if station.station == station_name:
             assert station in filtered_broadcast
