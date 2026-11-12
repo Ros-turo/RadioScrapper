@@ -16,14 +16,6 @@ class StationData:
     def is_day_bridging(self) -> bool:
         return True if self.start_time > self.end_time else False
 
-    def get_attribute(self, attribute: str) -> str | None:
-        try:
-            value = self.__getattribute__(attribute)
-        except KeyError:
-            return None
-        else:
-            return str(value)
-
 
 
 class Broadcast:
