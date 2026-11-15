@@ -5,6 +5,7 @@ from radioscraper.eibi.model import Broadcast
 from radioscraper.eibi.parser import language_json_to_dict
 from radioscraper.ui.filter_proxy import BroadcastFilterProxyModel
 from radioscraper.ui.table_model import BroadcastTableModel
+from datetime import datetime
 
 
 def filling_language_combo_box(combo_box: QComboBox) -> None:
@@ -22,19 +23,12 @@ class MainWindow(QMainWindow):
         self.model = BroadcastTableModel(broadcast, self)
         self.proxy = BroadcastFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
+        self.proxy.set_now(datetime.now())
         self.table.setModel(self.proxy)
         self.table.setSortingEnabled(True)
 
-        self.search = QLineEdit(placeholderText="Station")
-        self.search.textChanged.connect(self.proxy.set_text)
-
-        self.language = QComboBox(placeholderText="Language")
-        filling_language_combo_box(self.language)
-
-        self.irregular = QCheckBox("Show irregular")
-
         self.filters = QHBoxLayout()
-        self.add_widgets_to_filters_box()
+        self.fill_filters_box()
 
         self.root = QVBoxLayout()
         self.root.addLayout(self.filters)
@@ -46,24 +40,28 @@ class MainWindow(QMainWindow):
 
         self.statusBar().showMessage("Ready")
 
+    def fill_filters_box(self) -> None:
+        self.set_station_searcher()
+        self.set_language_combo_box()
+        self.set_now_check_box()
+        self.add_widgets_to_filters_box()
 
     def add_widgets_to_filters_box(self) -> None:
         self.filters.addWidget(QLabel("Station: "))
         self.filters.addWidget(self.search, stretch=1)
         self.filters.addWidget(QLabel("Language: "))
         self.filters.addWidget(self.language, stretch=1)
-        self.filters.addWidget(self.irregular)
+        self.filters.addWidget(self.now_check_box)
 
+    def set_station_searcher(self) -> None:
+        self.search = QLineEdit(placeholderText="Station")
+        self.search.textChanged.connect(self.proxy.set_text)
 
-    def show_station_in_status_bar(self, text: str) -> None:
-        self.statusBar().showMessage(text)
+    def set_language_combo_box(self) -> None:
+        self.language = QComboBox(placeholderText="Language")
+        filling_language_combo_box(self.language)
+        self.language.currentTextChanged.connect(self.proxy.set_language)
 
-    def show_language_in_status_bar(self, index: int) -> None:
-        language = self.language.currentText()
-        self.statusBar().showMessage(str(language))
+    def set_now_check_box(self) -> None:
+        self.now_check_box = QCheckBox("NOW")
 
-    def show_toggled_in_status_bar(self, toggled: bool) -> None:
-        self.statusBar().showMessage(str(toggled))
-
-    def set_default_language(self) -> None:
-        self.language.setCurrentText("English")
