@@ -1,4 +1,4 @@
-from datetime import time, datetime
+from datetime import time, datetime, timedelta
 
 from radioscraper.eibi.model import Broadcast, StationData
 
@@ -35,9 +35,10 @@ def today_broadcast_on_air(origin_broadcast: Broadcast, today: datetime) -> Broa
     return on_air_broadcast
 
 
-def yesterday_broadcast_on_air(origin_broadcast: Broadcast, yesterday: datetime) -> Broadcast:
+def yesterday_broadcast_on_air(origin_broadcast: Broadcast, today: datetime) -> Broadcast:
     yesterday_on_air_broadcast = Broadcast()
-    air_time = yesterday.time()
+    air_time = today.time()
+    yesterday = today - timedelta(days=1)
     yesterday_broadcast_list = target_day_broadcast(origin_broadcast, yesterday)
     for station in yesterday_broadcast_list:
         if air_time <= station.end_time:

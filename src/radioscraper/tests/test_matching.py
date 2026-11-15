@@ -18,7 +18,9 @@ def station_BBC() -> StationData:
     [
         ("BBC", True),
         ("bbc", True),
-        ("not_bbc", False)
+        ("not_bbc", False),
+        ("", True),
+        ("bc", True)
     ])
 def test_match_station_name(station_BBC: StationData, matching_name: str, expected_value: bool) -> None:
     asserting_value = match_station_name(station_BBC, matching_name)

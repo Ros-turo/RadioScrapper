@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QMainWindow, QLineEdit, QHBo
 
 from radioscraper.eibi.model import Broadcast
 from radioscraper.eibi.parser import language_json_to_dict
+from radioscraper.ui.filter_proxy import BroadcastFilterProxyModel
 from radioscraper.ui.table_model import BroadcastTableModel
 
 
@@ -17,20 +18,20 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Radio Scraper")
         self.resize(1000, 600)
 
+        self.table = QTableView()
+        self.model = BroadcastTableModel(broadcast, self)
+        self.proxy = BroadcastFilterProxyModel(self)
+        self.proxy.setSourceModel(self.model)
+        self.table.setModel(self.proxy)
+        self.table.setSortingEnabled(True)
+
         self.search = QLineEdit(placeholderText="Station")
-        self.search.textChanged.connect(self.show_station_in_status_bar)
-        self.search.textChanged.connect(self.set_default_language)
+        self.search.textChanged.connect(self.proxy.set_text)
 
         self.language = QComboBox(placeholderText="Language")
         filling_language_combo_box(self.language)
-        self.language.currentIndexChanged.connect(self.show_language_in_status_bar)
 
         self.irregular = QCheckBox("Show irregular")
-        self.irregular.toggled.connect(self.show_toggled_in_status_bar)
-
-        self.model = BroadcastTableModel(broadcast, self)
-        self.table = QTableView()
-        self.table.setModel(self.model)
 
         self.filters = QHBoxLayout()
         self.add_widgets_to_filters_box()

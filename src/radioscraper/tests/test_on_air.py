@@ -62,7 +62,7 @@ def test_yesterday_broadcast_on_air(mock_broadcast: Broadcast) -> None:
     yesterday = today - datetime.timedelta(days=1)
     yesterday_weekday = yesterday.weekday()
     now = today.time()
-    on_air_yesterday = yesterday_broadcast_on_air(mock_broadcast, yesterday)
+    on_air_yesterday = yesterday_broadcast_on_air(mock_broadcast, today)
     for station in mock_broadcast:
         if isinstance(station.regularity, list) and yesterday_weekday in station.regularity and station.end_time >= now:
             assert station in on_air_yesterday
