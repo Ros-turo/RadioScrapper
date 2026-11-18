@@ -25,9 +25,9 @@ def is_target_day_in_regularity(regularity: List[int], target_day: datetime) -> 
 
 def is_now_air_time_irregular(station_data: StationData, air_time: time) -> bool:
     if station_data.is_day_bridging:
-        return station_data.start_time > air_time > station_data.end_time
+        return station_data.start_time >= air_time < station_data.end_time
     else:
-        return station_data.start_time < air_time < station_data.end_time
+        return station_data.start_time <= air_time < station_data.end_time
 
 def is_on_air(station_data: StationData, target_day: datetime) -> bool:
     regularity = station_data.regularity
@@ -38,7 +38,7 @@ def is_on_air(station_data: StationData, target_day: datetime) -> bool:
         yesterday = target_day - timedelta(days=1)
 
         if is_target_day_in_regularity(regularity, today):
-            if station_data.start_time < air_time < station_data.end_time:
+            if station_data.start_time <= air_time <= station_data.end_time:
                 on_air = True
         if is_target_day_in_regularity(regularity, yesterday) and station_data.is_day_bridging:
             if air_time < station_data.end_time:
