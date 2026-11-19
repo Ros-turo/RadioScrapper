@@ -23,13 +23,20 @@ def is_target_day_in_regularity(regularity: List[int], target_day: datetime) -> 
     weekday = target_day.weekday()
     return weekday in regularity
 
-def is_today_station_on_air(station_data:StationData, air_time: time) -> bool:
-    if station_data.start_time <= air_time and (station_data.is_day_bridging or air_time <= station_data.end_time):
-        return True
+def is_today_station_on_air(regularity: List[int], station_data: StationData, today: datetime) -> bool:
+    air_time = today.time()
+    if is_target_day_in_regularity(regularity, today):
+        if station_data.start_time <= air_time and (station_data.is_day_bridging or air_time <= station_data.end_time):
+            return True
     return False
 
-def is_yesterday_station_on_air(station_data:StationData, air_time: time) -> bool:
-    return True if air_time <= station_data.end_time else False
+def is_yesterday_station_on_air(regularity: List[int], station_data: StationData, yesterday: datetime) -> bool:
+    air_time = yesterday.time()
+    if is_target_day_in_regularity(regularity, yesterday) and station_data.is_day_bridging:
+        if air_time <= station_data.end_time:
+            return True
+    return False
+
 
 def is_irregular_station_on_air(station_data: StationData, air_time: time) -> bool:
     if station_data.is_day_bridging:
@@ -44,13 +51,9 @@ def is_on_air(station_data: StationData, target_day: datetime) -> bool:
     if isinstance(regularity, list):
         today = target_day
         yesterday = target_day - timedelta(days=1)
-
-        if (is_target_day_in_regularity(regularity, today) and
-                is_today_station_on_air(station_data, air_time)):
+        if (is_today_station_on_air(regularity, station_data, today) or
+            is_yesterday_station_on_air(regularity, station_data,  yesterday)):
            on_air = True
-        if (is_target_day_in_regularity(regularity, yesterday) and station_data.is_day_bridging
-            and is_yesterday_station_on_air(station_data, air_time)):
-                on_air = True
     else:
         match regularity:
             case "irregular":
