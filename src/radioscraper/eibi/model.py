@@ -2,6 +2,7 @@ from dataclasses import dataclass, Field
 from datetime import time
 from typing import List, Literal, Iterator, Self, Generator
 
+EVERY_DAY = [0,1,2,3,4,5,6]
 
 @dataclass
 class StationData:

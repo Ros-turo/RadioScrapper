@@ -9,7 +9,7 @@ from io import TextIOWrapper
 from typing import List, cast, Literal
 
 from radioscraper.exceptions import NotWeekdayPeriodError
-from radioscraper.eibi.model import Broadcast, StationData
+from radioscraper.eibi.model import Broadcast, StationData, EVERY_DAY
 from radioscraper.settings import settings
 
 
@@ -94,9 +94,10 @@ class EibiParser(Parser):
 
         start_time = time(int(start_time_str[:2]), int(start_time_str[2:]))
 
-        if end_time_str[:2] == "24":
-            end_time_str = "2359"
-        end_time = time(int(end_time_str[:2]), int(end_time_str[2:]))
+        if end_time_str == "2400":
+            end_time = time(23,59,59)
+        else:
+            end_time = time(int(end_time_str[:2]), int(end_time_str[2:]))
 
         return start_time, end_time
 
@@ -125,7 +126,6 @@ class EibiParser(Parser):
     def get_regularity(self, days_row: str) -> List[int] |  Literal["irregular"] | Literal["Last7"]:
         #dayday - 4pismena 2dny
         #Last7 - posledni nedele, today + weekday of 1fs in month(except Sunday, -1) = 28
-        EVERY_DAY = [0,1,2,3,4,5,6]
 
         if not days_row:
             return EVERY_DAY
