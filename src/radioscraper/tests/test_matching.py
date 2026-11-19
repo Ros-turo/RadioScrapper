@@ -19,10 +19,6 @@ def station_BBC() -> StationData:
     return StationData(frequency=1000, start_time=time(12, 00), end_time=time(15, 00), station="BBC",
                        regularity="irregular", language=["English"])
 
-@pytest.fixture
-def target_day_monday_12_am() -> datetime:
-    return datetime(year=2026, month=11, day=2, hour=12)
-
 @pytest.mark.parametrize(
     "matching_name, expected_value",
     [

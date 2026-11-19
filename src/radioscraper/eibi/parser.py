@@ -1,7 +1,7 @@
 import csv
 import json
 from collections.abc import Sequence
-from datetime import  time
+from datetime import time
 import os
 from abc import ABC, abstractmethod
 from enum import Enum
