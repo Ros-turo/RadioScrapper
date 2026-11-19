@@ -5,7 +5,7 @@ from radioscraper.eibi.model import Broadcast
 from radioscraper.eibi.parser import language_json_to_dict
 from radioscraper.ui.filter_proxy import BroadcastFilterProxyModel
 from radioscraper.ui.table_model import BroadcastTableModel
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def filling_language_combo_box(combo_box: QComboBox) -> None:
@@ -23,7 +23,6 @@ class MainWindow(QMainWindow):
         self.model = BroadcastTableModel(broadcast, self)
         self.proxy = BroadcastFilterProxyModel(self)
         self.proxy.setSourceModel(self.model)
-        self.proxy.set_now(datetime.now())
         self.table.setModel(self.proxy)
         self.table.setSortingEnabled(True)
 
@@ -64,4 +63,9 @@ class MainWindow(QMainWindow):
 
     def set_now_check_box(self) -> None:
         self.now_check_box = QCheckBox("NOW")
+        self.now_check_box.setChecked(True)
+        self.now_check_box.toggled.connect(self.on_now_toggled)
 
+    def on_now_toggled(self, checked: bool) -> None:
+        set = datetime.now(timezone.utc) if checked else None
+        self.proxy.set_now(set)

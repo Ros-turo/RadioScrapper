@@ -23,7 +23,7 @@ class BroadcastFilterProxyModel(QSortFilterProxyModel):
         self._language = language
         self.invalidateFilter()
 
-    def set_now(self, now: datetime) -> None:
+    def set_now(self, now: datetime | None) -> None:
         self._now = now
         self.invalidateFilter()
 
