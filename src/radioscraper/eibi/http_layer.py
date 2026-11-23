@@ -43,3 +43,7 @@ class EibiAPI(StationAPI):
         with open(settings.EIBI_README_FILE, "w", encoding="utf-8") as f:
             f.write(data)
         return None
+
+
+def station_stream_url(frequency: float) -> str:
+    return f"{settings.STREAM_SITE_URL}?tune={frequency}am"

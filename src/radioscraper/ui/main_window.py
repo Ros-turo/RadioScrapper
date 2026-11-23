@@ -1,6 +1,9 @@
+from PySide6.QtCore import QModelIndex, QUrl
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QApplication, QLabel, QMainWindow, QLineEdit, QHBoxLayout, QVBoxLayout, QWidget, \
     QComboBox, QTableView, QCheckBox, QHeaderView
 
+from radioscraper.eibi.http_layer import station_stream_url
 from radioscraper.eibi.model import Broadcast
 from radioscraper.eibi.parser import language_json_to_dict
 from radioscraper.ui.filter_proxy import BroadcastFilterProxyModel
@@ -17,6 +20,7 @@ def filling_language_combo_box(combo_box: QComboBox) -> None:
 class MainWindow(QMainWindow):
     def __init__(self, broadcast: Broadcast) -> None:
         super().__init__()
+
         self.setWindowTitle("Radio Scraper")
         self.resize(1000, 600)
 
@@ -26,6 +30,7 @@ class MainWindow(QMainWindow):
         self.proxy.setSourceModel(self.model)
         self.table.setModel(self.proxy)
         self.table.setSortingEnabled(True)
+        self.table.doubleClicked.connect(self.open_stream)
 
         self.filters = QHBoxLayout()
         self.fill_filters_box()
@@ -81,3 +86,10 @@ class MainWindow(QMainWindow):
         self.table.resizeColumnToContents(4)
 
         self.table.horizontalHeader().setStretchLastSection(True)
+
+    def open_stream(self, proxy_index: QModelIndex) -> None:
+        source_index = self.proxy.mapToSource(proxy_index)
+        station = self.model.rows[source_index.row()]
+        self.statusBar().showMessage(f"{station.frequency} | {station.station}")
+        url = station_stream_url(station.frequency)
+        QDesktopServices.openUrl(QUrl(url))
