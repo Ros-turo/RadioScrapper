@@ -12,7 +12,7 @@ class BroadcastFilterProxyModel(QSortFilterProxyModel):
     def __init__(self, parent : QObject | None=None) -> None:
         super().__init__(parent)
         self._text = ""
-        self._language: str  = ""
+        self._language: str | None  = None
         self._now: datetime | None = None
 
     def set_text(self, text: str) -> None:

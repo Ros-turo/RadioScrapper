@@ -9,8 +9,8 @@ def match_station_name(station_data: StationData, matching_name: str) -> bool:
         return True
     return matching_name.casefold() in station_data.station.casefold()
 
-def match_language(station_data: StationData, matching_language: str) -> bool:
-    if not matching_language:
+def match_language(station_data: StationData, matching_language: str | None) -> bool:
+    if matching_language is None:
         return True
     elif station_data.language is None:
         return False
