@@ -1,14 +1,24 @@
-from radioscraper.eibi.model import StationData
+from typing import List
+
+from radioscraper.eibi.model import StationData, EVERY_DAY
+from radioscraper.eibi.parser import Weekday
 
 
 def format_regularity(station: StationData) -> str:
-    days = ""
-    if isinstance(station.regularity, list):
-        for day in station.regularity:
-            days += str(day)
-    elif isinstance(station.regularity, str):
-        days = station.regularity
-    return days
+    match station.regularity:
+        case list(station.regularity) as regularity:
+            return format_list_regularity(regularity)
+        case "irregular":
+            return "irregular"
+        case "Last7":
+            return "Last Sunday"
+        case _ :
+            return ""
+
+def format_list_regularity(regularity: List[int]) -> str:
+    if set(regularity) == set(EVERY_DAY):
+        return "Every day"
+    return " ".join(Weekday(day).name for day in sorted(regularity))
 
 def format_language(station: StationData) -> str:
     language = ""

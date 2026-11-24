@@ -29,6 +29,7 @@ class Weekday(Enum):
         except AttributeError:
             raise NotWeekdayPeriodError(day_of_week)
 
+
 class Parser(ABC):
 
     def __init__(self, fn: str):
