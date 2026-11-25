@@ -1,4 +1,4 @@
-from PySide6.QtCore import QModelIndex, QUrl
+from PySide6.QtCore import QModelIndex, QUrl, QTimer
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QApplication, QLabel, QMainWindow, QLineEdit, QHBoxLayout, QVBoxLayout, QWidget, \
     QComboBox, QTableView, QCheckBox, QHeaderView
@@ -20,22 +20,18 @@ def filling_language_combo_box(combo_box: QComboBox) -> None:
 class MainWindow(QMainWindow):
     def __init__(self, broadcast: Broadcast) -> None:
         super().__init__()
+        self.broadcast = broadcast
 
         self.setWindowTitle("Radio Scraper")
         self.resize(1000, 600)
 
-        self.table = QTableView()
-        self.model = BroadcastTableModel(broadcast, self)
-        self.proxy = BroadcastFilterProxyModel(self)
-        self.proxy.setSourceModel(self.model)
-        self.table.setModel(self.proxy)
-        self.table.setSortingEnabled(True)
-        self.table.doubleClicked.connect(self.open_stream)
+        self.setup_table()
 
         self.filters = QHBoxLayout()
         self.fill_filters_box()
 
-        self.setup_table()
+        self.setup_clock()
+        self.setup_timer()
 
         self.root = QVBoxLayout()
         self.root.addLayout(self.filters)
@@ -45,7 +41,8 @@ class MainWindow(QMainWindow):
         central.setLayout(self.root)
         self.setCentralWidget(central)
 
-        self.statusBar().showMessage("Ready")
+        self.statusBar().showMessage(f"Ready")
+
 
     def fill_filters_box(self) -> None:
         self.set_station_searcher()
@@ -79,7 +76,30 @@ class MainWindow(QMainWindow):
         self.filters.addWidget(self.language, stretch=1)
         self.filters.addWidget(self.now_check_box)
 
+    def setup_clock(self) -> None:
+        self.clock = QLabel()
+        self.statusBar().addPermanentWidget(self.clock)
+
+    def setup_timer(self) -> None:
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.actualize_now)
+        self.timer.start(1_000)
+
+    def actualize_now(self) -> None:
+        now = datetime.now(timezone.utc)
+        self.clock.setText(f" UTC {now.strftime('%H:%M')} · Local {now.astimezone().strftime('%H:%M')}")
+        if self.now_check_box.isChecked():
+            self.proxy.set_now(now)
+
+
     def setup_table(self) -> None:
+        self.table = QTableView()
+        self.model = BroadcastTableModel(self.broadcast, self)
+        self.proxy = BroadcastFilterProxyModel(self)
+        self.proxy.setSourceModel(self.model)
+        self.table.setModel(self.proxy)
+        self.table.setSortingEnabled(True)
+        self.table.doubleClicked.connect(self.open_stream)
         self.table.setColumnWidth(0, 75)
 
         self.table.resizeColumnToContents(1)

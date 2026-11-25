@@ -21,6 +21,7 @@ class BroadcastTableModel(QAbstractTableModel):
         super().__init__(parent)
         self.rows = rows
 
+
     def rowCount(self, parent: QModelIndex | QPersistentModelIndex = QModelIndex()) -> int:
         return 0 if parent.isValid() else len(self.rows)
 
