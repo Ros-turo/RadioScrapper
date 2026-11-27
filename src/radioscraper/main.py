@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 
@@ -34,6 +35,8 @@ def main() -> None:
 
     #GUI
     app = QApplication(sys.argv)
+    qss = Path(__file__).parent / "ui" / "theme.qss"
+    app.setStyleSheet(qss.read_text(encoding="utf-8"))
     window = MainWindow(broadcast)
     window.show()
     sys.exit(app.exec())

@@ -1,0 +1,185 @@
+/* Radio Scraper – tmavý "rádiový" styl
+   Barvy:
+     pozadí      #14130F   panely   #1A1915   pole   #1C1B17
+     rámečky     #2B2924 / #3A372F
+     text        #E8E4DA   tlumený  #9A9488
+     akcent      #F2A93B   vybraný řádek  #2A2215
+*/
+
+* {
+    font-family: "IBM Plex Sans", "Noto Sans", "Segoe UI", sans-serif;
+    font-size: 14px;
+}
+
+QMainWindow, QWidget {
+    background: #14130F;
+    color: #E8E4DA;
+}
+
+/* ---------- hlavička ---------- */
+
+QWidget#header {
+    background: #1A1915;
+    border-bottom: 1px solid #2B2924;
+}
+
+QLabel#appTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #F3EFE6;
+    background: transparent;
+}
+
+QLabel#appSubtitle,
+QLabel#clockCaption {
+    font-size: 11px;
+    color: #9A9488;
+    background: transparent;
+}
+
+QLabel#clockUtc {
+    font-family: "IBM Plex Mono", "DejaVu Sans Mono", monospace;
+    font-size: 30px;
+    font-weight: 500;
+    color: #F2A93B;
+    background: transparent;
+}
+
+QLabel#clockLocal {
+    font-family: "IBM Plex Mono", "DejaVu Sans Mono", monospace;
+    font-size: 18px;
+    color: #C9C3B6;
+    background: transparent;
+}
+
+/* ---------- lišta filtrů ---------- */
+
+QWidget#filterBar {
+    border-bottom: 1px solid #2B2924;
+}
+
+QLineEdit, QComboBox {
+    background: #1C1B17;
+    border: 1px solid #3A372F;
+    border-radius: 8px;
+    padding: 0 12px;
+    min-height: 38px;
+    selection-background-color: #F2A93B;
+    selection-color: #14130F;
+}
+
+QLineEdit:focus, QComboBox:focus, QComboBox:on {
+    border-color: #F2A93B;
+}
+
+QLineEdit::placeholder {           /* Qt 6.6+ ignoruje, barvu placeholderu řeší paleta */
+    color: #9A9488;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 28px;
+}
+
+QComboBox QAbstractItemView {
+    background: #1C1B17;
+    border: 1px solid #3A372F;
+    outline: none;
+    selection-background-color: #2A2215;
+    selection-color: #F2A93B;
+    padding: 4px;
+}
+
+/* přepínač ON AIR NOW = QPushButton se setCheckable(True) */
+QPushButton#nowToggle {
+    background: #1C1B17;
+    color: #9A9488;
+    border: 1px solid #3A372F;
+    border-radius: 19px;
+    min-height: 38px;
+    padding: 0 18px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+QPushButton#nowToggle:hover {
+    border-color: #6B6455;
+}
+
+QPushButton#nowToggle:checked {
+    background: #2A2215;
+    color: #F2A93B;
+    border-color: #F2A93B;
+}
+
+/* ---------- tabulka ---------- */
+
+QTableView {
+    background: #14130F;
+    border: none;
+    gridline-color: #23211C;
+    selection-background-color: #2A2215;
+    selection-color: #F3EFE6;
+    outline: none;
+    padding: 4px 16px 0 16px;
+}
+
+QTableView::item {
+    padding: 0 10px;
+    border-bottom: 1px solid #23211C;
+}
+
+QHeaderView::section {
+    background: #14130F;
+    color: #9A9488;
+    border: none;
+    border-bottom: 1px solid #2B2924;
+    padding: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;     /* Qt to ignoruje, velká písmena dej rovnou do COLUMNS */
+}
+
+QTableCornerButton::section {
+    background: #14130F;
+    border: none;
+}
+
+/* ---------- posuvníky ---------- */
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 10px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical {
+    background: #3A372F;
+    border-radius: 4px;
+    min-height: 40px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #6B6455;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line,
+QScrollBar::add-page, QScrollBar::sub-page {
+    background: none;
+    height: 0;
+}
+
+/* ---------- status bar ---------- */
+
+QStatusBar {
+    background: #1A1915;
+    border-top: 1px solid #2B2924;
+    color: #9A9488;
+    font-size: 12px;
+    padding-left: 20px;
+}
+
+QStatusBar::item {
+    border: none;
+}
