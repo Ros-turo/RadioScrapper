@@ -86,10 +86,10 @@ class MainWindow(QMainWindow):
         self.timer.start(1_000)
 
     def actualize_now(self) -> None:
-        #TODO: nechat clock kazdou vterinu ale proxy jednou za minutu
         now = datetime.now(timezone.utc)
+        seconds = now.second
         self.clock.setText(f" UTC {now.strftime('%H:%M')} · Local {now.astimezone().strftime('%H:%M')}")
-        if self.now_check_box.isChecked():
+        if self.now_check_box.isChecked() and seconds == 0:
             self.proxy.set_now(now)
 
 
